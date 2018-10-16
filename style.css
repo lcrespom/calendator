@@ -22,7 +22,7 @@ body {
 	position: relative;
 }
 
-.cal-text {
+.cal-cell {
 	position: absolute;
     top: 1ex;
     left: 0;
