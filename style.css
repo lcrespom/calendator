@@ -1,0 +1,31 @@
+body {
+	font-family: sans-serif;
+	background: white;
+}
+
+.calendar {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-gap: 1ex;
+	margin: 0 auto;
+	padding: 0;
+}
+
+.cal-weekday {
+	text-align: center
+}
+
+.cal-day {
+	text-align: center;
+	padding: 50% 0;
+	background: #F0F0F0;
+	position: relative;
+}
+
+.cal-text {
+	position: absolute;
+    top: 1ex;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
