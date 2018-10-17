@@ -22,6 +22,10 @@ body {
 	position: relative;
 }
 
+.cal-empty {
+	background: white;
+}
+
 .cal-cell {
 	position: absolute;
     top: 1ex;

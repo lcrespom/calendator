@@ -29,11 +29,13 @@ $(function() {
 		let daynum = 2 - d.getDay()
 		let dim = daysInMonth(mnum, year)
 		for (let i = 1; i <= totalDays; i++) {
-			let daylabel = daynum
-			if (daynum <= 0 || daynum > dim) daylabel = ''
-			let html = `<div class="cal-day"><div class="cal-cell">${daylabel}</div></div>`
+			let $daycell = $('<div class="cal-day"></div>')
+			if (daynum > 0 && daynum <= dim)
+				$daycell.append(`<div class="cal-cell">${daynum}</div></div>`)
+			else
+				$daycell.addClass('cal-empty')
 			daynum++
-			$month.append(html)
+			$month.append($daycell)
 		}
 	}
 
