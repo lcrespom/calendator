@@ -20,7 +20,7 @@ body {
 
 #calendar {
 	position: absolute;
-	left: 18rem;
+	left: 17rem;
 	width: calc(100% - 18rem);
 }
 

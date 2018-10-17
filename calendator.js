@@ -76,9 +76,8 @@ $(function() {
 
 /*
 TODO
-- Infinte scroll: add more months
 - Add inputs to fill events
 	- Name / color / Start date / x days / repeat every y days / z times
-- Add bootstrap
-- Add local jquery
+- Draw events in calendar
+- Infinte scroll: add more months
 */
