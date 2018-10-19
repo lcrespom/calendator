@@ -58,6 +58,44 @@ $(function() {
 		$cal.append($mblock)
 	}
 
+	//-------------------- Event handling --------------------
+
+	function getEvents() {
+		let events = []
+		$('.cal-event-inputs').each((i, e) => {
+			let $inputs = $(e).find('input')
+			let getv = i => $inputs.get(i).value
+			let event = {
+				name: getv(0),
+				color: getv(1),
+				start: getv(2),
+				duration: getv(3),
+				every: getv(4),
+				repeat: getv(5)
+			}
+			if (isValidEvent(event))
+				events.push(setEventDefaults(event))
+		})
+		return events
+	}
+
+	function updateCalendar() {
+		let events = getEvents()
+		console.log(events)
+	}
+
+	function isValidEvent(e) {
+		return e.name && e.color && e.start
+	}
+
+	function setEventDefaults(e) {
+		if (!e.duration) e.duration = 1
+		if (!e.every) e.every = 1
+		if (!e.repeat) e.repeat = 1
+		return e
+	}
+
+
 	//-------------------- Event panel --------------------
 
 	function setupEventPanel() {
@@ -79,6 +117,7 @@ $(function() {
 	function addEventInputs() {
 		let $inputs = $(`<div class="cal-event-inputs"></div>`)
 		$inputs
+			.append('<hr/>')
 			.append(formGroup('Name'))
 			.append(formGroup('Color', 'color', randomColor()))
 			.append(formGroup('Start', 'date', date2html(new Date())))
@@ -90,9 +129,10 @@ $(function() {
 						<label />
 						<button class="btn btn-sm btn-warning">Remove event</button>
 					</div>`)
-		$('#event-list')
-			.prepend($inputs)
-			.prepend('<hr/>')
+		$inputs.on('input', _ => updateCalendar())
+		$inputs.find('button')
+			.click(_ => $inputs.remove() && updateCalendar())
+		$('#event-list').prepend($inputs)
 	}
 
 
@@ -162,8 +202,6 @@ $(function() {
 
 /*
 TODO
-- Add inputs to fill events
-	- Name / color / Start date / x days / repeat every y days / z times
 - Draw events in calendar
 - Infinte scroll: add more months
 */
