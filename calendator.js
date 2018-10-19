@@ -102,12 +102,10 @@ $(function() {
 		$('#cal-add-event').click(_ => addEventInputs())
 	}
 
-	function formGroup(label, type = 'text', value = '',
-		{ before = '', after = ''} = {}) {
+	function formGroup(label, type = 'text', value = '', after = '') {
 		return $(`
 		<div class="form-group">
 			<label>${label}</label>
-			${before}
 			<input type="${type}" value="${value}" class="form-control"/>
 			${after}
 		</div>
@@ -121,10 +119,9 @@ $(function() {
 			.append(formGroup('Name'))
 			.append(formGroup('Color', 'color', randomColor()))
 			.append(formGroup('Start', 'date', date2html(new Date())))
-			.append(formGroup('Duration', 'number', '1', { after: 'days' }))
-			.append(formGroup('Repeat', 'number', '',
-				{ before: 'every', after: 'days' }))
-			.append(formGroup('For', 'number', '', { after: 'times' }))
+			.append(formGroup('Duration', 'number', '1', 'day(s)'))
+			.append(formGroup('Every', 'number', '', 'day(s)'))
+			.append(formGroup('Repeat', 'number', '', 'time(s)'))
 			.append(`<div class="form-group">
 						<label />
 						<button class="btn btn-sm btn-warning">Remove event</button>
