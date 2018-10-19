@@ -75,17 +75,12 @@ $(function() {
 		`)
 	}
 
-	function randomColor() {
-		let [r, g, b] = hsl2rgb(Math.random(), 1, 0.5)
-		return rgb2hex(r, g, b)
-	}
-
 	function addEventInputs() {
 		let $inputs = $(`<div class="cal-event-inputs"></div>`)
 		$inputs
 			.append(formGroup('Name'))
 			.append(formGroup('Color', 'color', randomColor()))
-			.append(formGroup('Start', 'date'))
+			.append(formGroup('Start', 'date', date2html(new Date())))
 			.append(formGroup('Duration', 'number', '', '', 'days'))
 			.append(formGroup('Repeat', 'number', '', 'every', 'days'))
 			.append(formGroup('For', 'number', '', '', 'times'))
@@ -131,6 +126,16 @@ $(function() {
 		}
 		return `#${d2h(r)}${d2h(g)}${d2h(b)}`
 	}
+
+	function randomColor() {
+		let [r, g, b] = hsl2rgb(Math.random(), 1, 0.5)
+		return rgb2hex(r, g, b)
+	}
+
+	function date2html(d) {
+		return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+	}
+
 
 	//-------------------- Main --------------------
 
