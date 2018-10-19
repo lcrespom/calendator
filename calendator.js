@@ -1,5 +1,7 @@
 $(function() {
 
+	//-------------------- Calendar panel --------------------
+
 	MONTHS = [
 		'January', 'February', 'March', 'April',
 		'May', 'June', 'July', 'August',
@@ -56,6 +58,61 @@ $(function() {
 		$cal.append($mblock)
 	}
 
+	//-------------------- Event panel --------------------
+
+	function setupEventPanel() {
+		$('#cal-add-event').click(_ => addEventInputs())
+	}
+
+	function formGroup(label, type = 'text', value = "") {
+		return $(`
+		<div class="form-group">
+			<label>${label}</label>
+			<input type="${type}" value="${value}" class="form-control"/>
+		</div>
+		`)
+	}
+
+	function addEventInputs() {
+		// let $inputs = $(`<div class="cal-event-inputs"></div>`)
+		// $inputs.append(formGroup('Name'))
+		$('#events').append(`
+<hr/>
+<div class="cal-event-inputs">
+	<div class="form-group">
+		<label>Name</label>
+		<input type="text" class="form-control"/>
+	</div>
+	<div class="form-group">
+		<label>Color</label>
+		<input type="color" value="#ff0000" class="form-control">
+	</div>
+	<div class="form-group">
+		<label>Start</label>
+		<input type="date" class="form-control"/>
+	</div>
+	<div class="form-group">
+		<label>Duration</label>
+		<input type="number" class="form-control"/> days
+	</div>
+	<div class="form-group">
+		<label>Repeat</label>
+		every <input type="number" class="form-control"/> days
+	</div>
+	<div class="form-group">
+		<label>For</label>
+		<input type="number" class="form-control"/> times
+	</div>
+	<div class="form-group">
+		<label></label>
+		<button class="btn btn-sm btn-warning">Remove event</button>
+	</div>
+</div>
+`)
+	}
+
+	//-------------------- Main --------------------
+
 	function main() {
 		let today = new Date()
 		let month = today.getMonth()
@@ -68,6 +125,7 @@ $(function() {
 			let name = `${MONTHS[mnum]} ${year}`
 			addCalendar($cal, name, mnum, year)
 		}
+		setupEventPanel()
 	}
 
 	main()
