@@ -89,14 +89,17 @@ $(function() {
 
 	function addEventToCalendar(evt, $cal) {
 		let event = Object.assign({}, evt)
-		let d = new Date(event.start)
+		let startDate = new Date(event.start)
 		let today = new Date()
 		for (let i = 0; i < event.repeat; i++) {
-			$cell = getCellForDay(d, $cal)
-			if (!$cell && d.getTime() > today.getTime()) return
-			//TODO take event.duration into account
-			addEventToCell(event, $cell)
-			d.setDate(d.getDate() + event.every)
+			let d = new Date(startDate.getTime())
+			for (let j = 0; j < event.duration; j++) {
+				let $cell = getCellForDay(d, $cal)
+				if (!$cell && d.getTime() > today.getTime()) return
+				addEventToCell(event, $cell)
+				d.setDate(d.getDate() + 1)
+			}
+			startDate.setDate(startDate.getDate() + event.every)
 		}
 	}
 
@@ -121,7 +124,7 @@ $(function() {
 	function setEventDefaults(e) {
 		if (!e.duration) e.duration = 1
 		if (!e.every) e.every = 1
-		if (!e.repeat) e.repeat = 1	//TODO this should be bigger
+		if (!e.repeat) e.repeat = 1	//TODO could default to "forever"
 		let [r, g, b] = parseHexColor(e.color)
 		e.txtcolor = isDarkColor(r, g, b) ? '#ffffff' : '#000000'
 		return e
@@ -213,7 +216,8 @@ $(function() {
 	}
 
 	function isDarkColor(r, g, b) {
-		return r + g + b < 256
+		let luminance = (r * 0.299 + g * 0.587 + b * 0.114) / 256
+		return luminance < 0.5
 	}
 
 
