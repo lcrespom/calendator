@@ -139,8 +139,7 @@ $(function() {
 		if (!e.duration) e.duration = 1
 		if (!e.every) e.every = 1
 		if (!e.repeat) e.repeat = 1	// Could default to "forever"
-		let [r, g, b] = parseHexColor(e.color)
-		e.txtcolor = isDarkColor(r, g, b) ? '#ffffff' : '#000000'
+		e.txtcolor = getContrastingColor(e.color)
 		return e
 	}
 
@@ -150,7 +149,7 @@ $(function() {
 			hash += '\\' + encodeURI(e.name) +
 				'|' + e.color + '|' + e.start +
 				'|' + e.duration + '|' + e.every +
-				'|' + e.repeat + '|' + e.txtcolor
+				'|' + e.repeat
 		return hash.substr(1)
 	}
 
@@ -159,7 +158,7 @@ $(function() {
 		let events = []
 		for (let sevt of sevts) {
 			edata = sevt.split('|')
-			if (edata.length < 7) break
+			if (edata.length < 6) break
 			events.push({
 				name: decodeURI(edata[0]),
 				color: edata[1],
@@ -167,7 +166,7 @@ $(function() {
 				duration: parseInt(edata[3]),
 				every: parseInt(edata[4]),
 				repeat: parseInt(edata[5]),
-				txtcolor: edata[6]
+				txtcolor: getContrastingColor(edata[1])
 			})
 		}
 		return events
@@ -176,7 +175,7 @@ $(function() {
 	function initEventsFromHash() {
 		let events = hash2events()
 		$('#event-list').empty()
-		for (let event of events) {
+		for (let event of events.reverse()) {
 			let $inputs = addEventInputs().find('input')
 			event2form(event, $inputs)
 		}
@@ -271,6 +270,11 @@ $(function() {
 	function isDarkColor(r, g, b) {
 		let luminance = (r * 0.299 + g * 0.587 + b * 0.114) / 256
 		return luminance < 0.6
+	}
+
+	function getContrastingColor(color) {
+		let [r, g, b] = parseHexColor(color)
+		return isDarkColor(r, g, b) ? '#ffffff' : '#000000'
 	}
 
 
