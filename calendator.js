@@ -69,9 +69,9 @@ $(function() {
 				name: getv(0),
 				color: getv(1),
 				start: getv(2),
-				duration: getv(3),
-				every: getv(4),
-				repeat: getv(5)
+				duration: parseInt(getv(3)),
+				every: parseInt(getv(4)),
+				repeat: parseInt(getv(5))
 			}
 			if (isValidEvent(event))
 				events.push(setEventDefaults(event))
@@ -83,32 +83,28 @@ $(function() {
 		let events = getEvents()
 		console.log(events)
 		$('#calendar').find('.cal-event').remove()
-		$('#calendar').find('.cal-cell').each(
-			(i, e) => addEventsToCell(events, $(e))
-		)
-	}
-
-	function getCellDate($cell) {
-		let id = $cell.attr('id')
-		if (!id) return []
-		let m = id.match(/^day-(\d+)-(\d+)-(\d+)$/)
-		if (!m) return []
-		let yy = parseInt(m[1])
-		let mm = parseInt(m[2])
-		let dd = parseInt(m[3])
-		return [yy, mm, dd]
-	}
-
-	function eventIsToday(event, y, m, d) {
-		return false
-	}
-
-	function addEventsToCell(events, $cell) {
-		let [y, m, d] = getCellDate($cell)
-		if (!d) return
 		for (let event of events)
-			if (eventIsToday(event, y, m, d))
-				addEventToCell(event, $cell)
+			addEventToCalendar(event, $('#calendar'))
+	}
+
+	function addEventToCalendar(evt, $cal) {
+		let event = Object.assign({}, evt)
+		let d = new Date(event.start)
+		let today = new Date()
+		for (let i = 0; i < event.repeat; i++) {
+			cell = getCellForDay(d, $cal)
+			if (!cell && d.getTime() > today.getTime()) return
+			console.log('TODO: ', d)
+			//TODO: paint event.duration cells
+			d.setDate(d.getDate() + event.every)
+		}
+	}
+
+	function getCellForDay(d, $cal) {
+		let yy = d.getFullYear()
+		let mm = d.getMonth() + 1
+		let dd = d.getDate()
+		return $cal.find(`#day-${yy}-${mm}-${dd}`)
 	}
 
 	function isValidEvent(e) {
@@ -118,7 +114,7 @@ $(function() {
 	function setEventDefaults(e) {
 		if (!e.duration) e.duration = 1
 		if (!e.every) e.every = 1
-		if (!e.repeat) e.repeat = 1
+		if (!e.repeat) e.repeat = 1	//TODO this should be bigger
 		return e
 	}
 
@@ -199,7 +195,7 @@ $(function() {
 	}
 
 	function date2html(d) {
-		return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+		return d.toISOString().split('T')[0]
 	}
 
 
