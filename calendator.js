@@ -32,7 +32,7 @@ $(function() {
 		for (let i = 1; i <= totalDays; i++) {
 			let $daycell = $('<div class="cal-day"></div>')
 			if (daynum > 0 && daynum <= dim) {
-				id = `day-${year}-${mnum}-${daynum}`
+				id = `day-${year}-${mnum + 1}-${daynum}`
 				$daycell.append(
 					`<div class="cal-cell" id="${id}">${daynum}</div></div>`
 				)
@@ -82,6 +82,33 @@ $(function() {
 	function updateCalendar() {
 		let events = getEvents()
 		console.log(events)
+		$('#calendar').find('.cal-event').remove()
+		$('#calendar').find('.cal-cell').each(
+			(i, e) => addEventsToCell(events, $(e))
+		)
+	}
+
+	function getCellDate($cell) {
+		let id = $cell.attr('id')
+		if (!id) return []
+		let m = id.match(/^day-(\d+)-(\d+)-(\d+)$/)
+		if (!m) return []
+		let yy = parseInt(m[1])
+		let mm = parseInt(m[2])
+		let dd = parseInt(m[3])
+		return [yy, mm, dd]
+	}
+
+	function eventIsToday(event, y, m, d) {
+		return false
+	}
+
+	function addEventsToCell(events, $cell) {
+		let [y, m, d] = getCellDate($cell)
+		if (!d) return
+		for (let event of events)
+			if (eventIsToday(event, y, m, d))
+				addEventToCell(event, $cell)
 	}
 
 	function isValidEvent(e) {
@@ -200,5 +227,6 @@ $(function() {
 /*
 TODO
 - Draw events in calendar
+- Add min and max attributes in numeric inputs
 - Infinte scroll: add more months
 */
