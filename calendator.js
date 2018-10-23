@@ -81,10 +81,10 @@ $(function() {
 
 	function updateCalendar() {
 		let events = getEvents()
-		console.log(events)
 		$('#calendar').find('.cal-event').remove()
 		for (let event of events)
 			addEventToCalendar(event, $('#calendar'))
+		//TODO set events to URL hash
 	}
 
 	function addEventToCalendar(evt, $cal) {
@@ -92,12 +92,19 @@ $(function() {
 		let d = new Date(event.start)
 		let today = new Date()
 		for (let i = 0; i < event.repeat; i++) {
-			cell = getCellForDay(d, $cal)
-			if (!cell && d.getTime() > today.getTime()) return
-			console.log('TODO: ', d)
-			//TODO: paint event.duration cells
+			$cell = getCellForDay(d, $cal)
+			if (!$cell && d.getTime() > today.getTime()) return
+			//TODO take event.duration into account
+			addEventToCell(event, $cell)
 			d.setDate(d.getDate() + event.every)
 		}
+	}
+
+	function addEventToCell(event, $cell) {
+		$evt = $(`<div class="cal-event">${event.name}</div>`)
+		$evt.css('background-color', event.color)
+			.css('color', event.txtcolor)
+		$cell.append($evt)
 	}
 
 	function getCellForDay(d, $cal) {
@@ -115,6 +122,8 @@ $(function() {
 		if (!e.duration) e.duration = 1
 		if (!e.every) e.every = 1
 		if (!e.repeat) e.repeat = 1	//TODO this should be bigger
+		let [r, g, b] = parseHexColor(e.color)
+		e.txtcolor = isDarkColor(r, g, b) ? '#ffffff' : '#000000'
 		return e
 	}
 
@@ -196,6 +205,15 @@ $(function() {
 
 	function date2html(d) {
 		return d.toISOString().split('T')[0]
+	}
+
+	function parseHexColor(hexcol) {
+		let rgb = parseInt(hexcol.substr(1), 16)
+		return [rgb & 255, rgb >> 8 & 255, rgb >> 16 & 255]
+	}
+
+	function isDarkColor(r, g, b) {
+		return r + g + b < 256
 	}
 
 
