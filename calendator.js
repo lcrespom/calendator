@@ -189,14 +189,18 @@ $(function() {
 		$('#cal-add-event').click(_ => addEventInputs())
 	}
 
-	function formGroup(label, type = 'text', value = '', after = '') {
-		return $(`
+	function formGroup(label, type = 'text', value = '', after = '', attrs = {}) {
+		let $group = $(`
 		<div class="form-group">
 			<label>${label}</label>
 			<input type="${type}" value="${value}" class="form-control"/>
 			${after}
 		</div>
 		`)
+		let $input = $group.find('input')
+		for (let attrName in attrs)
+			$input.attr(attrName, attrs[attrName])
+		return $group
 	}
 
 	function addEventInputs() {
@@ -206,9 +210,12 @@ $(function() {
 			.append(formGroup('Name'))
 			.append(formGroup('Color', 'color', randomColor()))
 			.append(formGroup('Start', 'date', date2html(new Date())))
-			.append(formGroup('Duration', 'number', '1', 'day(s)'))
-			.append(formGroup('Every', 'number', '', 'day(s)'))
-			.append(formGroup('Repeat', 'number', '', 'time(s)'))
+			.append(formGroup('Duration', 'number', '1', 'day(s)',
+				{ min: 1, step: 1 }))
+			.append(formGroup('Every', 'number', '', 'day(s)',
+				{ min: 1, step: 1 }))
+			.append(formGroup('Repeat', 'number', '', 'time(s)',
+				{ min: 1, step: 1 }))
 			.append(`<div class="form-group">
 						<label />
 						<button class="btn btn-sm btn-warning">Remove event</button>
@@ -216,7 +223,9 @@ $(function() {
 		$inputs.on('input', _ => updateCalendar())
 		$inputs.find('button')
 			.click(_ => $inputs.remove() && updateCalendar())
-		return $('#event-list').prepend($inputs)
+		$('#event-list').prepend($inputs)
+		$inputs.find('input').get(0).focus()
+		return $inputs
 	}
 
 
@@ -299,12 +308,3 @@ $(function() {
 	main()
 
 })
-
-/*
-TODO
-- Add other attributes to inputs:
-	- Min and max attributes in numeric inputs
-	- Autofocus to name
-	- Etc?
-- Infinte scroll: add more months
-*/
