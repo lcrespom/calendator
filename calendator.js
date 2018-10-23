@@ -60,19 +60,33 @@ $(function() {
 
 	//-------------------- Event handling --------------------
 
-	function getEvents() {
+	function form2event($inputs) {
+		let getv = i => $inputs.get(i).value
+		return {
+			name: getv(0),
+			color: getv(1),
+			start: getv(2),
+			duration: parseInt(getv(3)),
+			every: parseInt(getv(4)),
+			repeat: parseInt(getv(5))
+		}
+	}
+
+	function event2form(event, $inputs) {
+		let setv = (i, v) => $inputs.get(i).value = v
+		setv(0, event.name)
+		setv(1, event.color)
+		setv(2, event.start)
+		setv(3, event.duration)
+		setv(4, event.every)
+		setv(5, event.repeat)
+	}
+
+	function getEventsFromUI() {
 		let events = []
 		$('.cal-event-inputs').each((i, e) => {
 			let $inputs = $(e).find('input')
-			let getv = i => $inputs.get(i).value
-			let event = {
-				name: getv(0),
-				color: getv(1),
-				start: getv(2),
-				duration: parseInt(getv(3)),
-				every: parseInt(getv(4)),
-				repeat: parseInt(getv(5))
-			}
+			let event = form2event($inputs)
 			if (isValidEvent(event))
 				events.push(setEventDefaults(event))
 		})
@@ -80,11 +94,11 @@ $(function() {
 	}
 
 	function updateCalendar() {
-		let events = getEvents()
+		let events = getEventsFromUI()
 		$('#calendar').find('.cal-event').remove()
 		for (let event of events)
 			addEventToCalendar(event, $('#calendar'))
-		//TODO set events to URL hash
+		location.hash = '#' + events2hash(events)
 	}
 
 	function addEventToCalendar(evt, $cal) {
@@ -124,10 +138,49 @@ $(function() {
 	function setEventDefaults(e) {
 		if (!e.duration) e.duration = 1
 		if (!e.every) e.every = 1
-		if (!e.repeat) e.repeat = 1	//TODO could default to "forever"
+		if (!e.repeat) e.repeat = 1	// Could default to "forever"
 		let [r, g, b] = parseHexColor(e.color)
 		e.txtcolor = isDarkColor(r, g, b) ? '#ffffff' : '#000000'
 		return e
+	}
+
+	function events2hash(events) {
+		let hash = ''
+		for (let e of events)
+			hash += '\\' + encodeURI(e.name) +
+				'|' + e.color + '|' + e.start +
+				'|' + e.duration + '|' + e.every +
+				'|' + e.repeat + '|' + e.txtcolor
+		return hash.substr(1)
+	}
+
+	function hash2events() {
+		let sevts = location.hash.substr(1).split('\\')
+		let events = []
+		for (let sevt of sevts) {
+			edata = sevt.split('|')
+			if (edata.length < 7) break
+			events.push({
+				name: decodeURI(edata[0]),
+				color: edata[1],
+				start: edata[2],
+				duration: parseInt(edata[3]),
+				every: parseInt(edata[4]),
+				repeat: parseInt(edata[5]),
+				txtcolor: edata[6]
+			})
+		}
+		return events
+	}
+
+	function initEventsFromHash() {
+		let events = hash2events()
+		$('#event-list').empty()
+		for (let event of events) {
+			let $inputs = addEventInputs().find('input')
+			event2form(event, $inputs)
+		}
+		updateCalendar()
 	}
 
 
@@ -164,7 +217,7 @@ $(function() {
 		$inputs.on('input', _ => updateCalendar())
 		$inputs.find('button')
 			.click(_ => $inputs.remove() && updateCalendar())
-		$('#event-list').prepend($inputs)
+		return $('#event-list').prepend($inputs)
 	}
 
 
@@ -217,7 +270,7 @@ $(function() {
 
 	function isDarkColor(r, g, b) {
 		let luminance = (r * 0.299 + g * 0.587 + b * 0.114) / 256
-		return luminance < 0.5
+		return luminance < 0.6
 	}
 
 
@@ -236,6 +289,7 @@ $(function() {
 			addCalendar($cal, name, mnum, year)
 		}
 		setupEventPanel()
+		initEventsFromHash()
 	}
 
 	main()
@@ -244,7 +298,9 @@ $(function() {
 
 /*
 TODO
-- Draw events in calendar
-- Add min and max attributes in numeric inputs
+- Add other attributes to inputs:
+	- Min and max attributes in numeric inputs
+	- Autofocus to name
+	- Etc?
 - Infinte scroll: add more months
 */
