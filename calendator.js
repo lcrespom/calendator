@@ -2,12 +2,12 @@ $(function() {
 
 	//-------------------- Calendar panel --------------------
 
-	MONTHS = [
+	let MONTHS = [
 		'January', 'February', 'March', 'April',
 		'May', 'June', 'July', 'August',
 		'September', 'October', 'November', 'December'
 	]
-	WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+	let WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 	function daysInMonth(month, year) {
 		return new Date(year, month + 1, 0).getDate()
