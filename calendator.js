@@ -32,7 +32,7 @@ $(function() {
 		for (let i = 1; i <= totalDays; i++) {
 			let $daycell = $('<div class="cal-day"></div>')
 			if (daynum > 0 && daynum <= dim) {
-				id = `day-${year}-${mnum + 1}-${daynum}`
+				let id = `day-${year}-${mnum + 1}-${daynum}`
 				$daycell.append(
 					`<div class="cal-cell" id="${id}">${daynum}</div></div>`
 				)
@@ -118,7 +118,7 @@ $(function() {
 	}
 
 	function addEventToCell(event, $cell) {
-		$evt = $(`<div class="cal-event">${event.name}</div>`)
+		let $evt = $(`<div class="cal-event">${event.name}</div>`)
 		$evt.css('background-color', event.color)
 			.css('color', event.txtcolor)
 		$cell.append($evt)
@@ -158,7 +158,7 @@ $(function() {
 		let sevts = hash.split('\\')
 		let events = []
 		for (let sevt of sevts) {
-			edata = sevt.split('|')
+			let edata = sevt.split('|')
 			if (edata.length < 6) break
 			events.push({
 				name: decodeURI(edata[0]),
